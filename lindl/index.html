@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>LINDL.XX | Streetwear</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* --- INTRO VIDEO CSS --- */
+#intro-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: #000; z-index: 99999;
+    display: flex; justify-content: center; align-items: center;
+    transition: opacity 0.8s ease-out;
+}
+#intro-overlay video {
+    width: 100%; height: 100%; object-fit: cover;
+}
+/* Intro controls style */
+.intro-btn {
+    position: absolute; z-index: 100000; cursor: pointer;
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.3);
+    color: white; padding: 10px 20px; border-radius: 30px;
+    backdrop-filter: blur(5px); transition: 0.3s;
+    font-size: 0.9rem; font-weight: bold; text-transform: uppercase;
+}
+.intro-btn:hover { background: rgba(255,255,255,0.2); }
+#skip-btn { bottom: 40px; right: 30px; }
+#mute-btn { bottom: 40px; left: 30px; }
+
+/* --- ҮНДСЭН CSS --- */
+:root {
+  --primary-red: #FF0000;
+  --dark-bg: #050505;
+  --card-bg: rgba(20, 20, 20, 0.95);
+  --text-white: #ffffff;
+}
+* { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+body {
+  margin: 0; font-family: 'Segoe UI', sans-serif;
+  color: var(--text-white);
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('bg.JPG');
+  background-size: cover; background-position: top center;
+  background-repeat: no-repeat; background-attachment: fixed;
+  min-height: 100vh; padding-bottom: 20px;
+}
+@media (max-width: 768px) { body { background-attachment: scroll; } }
+
+/* --- HEADER RE-DESIGN --- */
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 15px 5%; background: rgba(0,0,0,0.95);
+  border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100;
+  backdrop-filter: blur(10px);
+}
+.header-left { display: flex; align-items: center; gap: 15px; }
+.logo-text { 
+    font-size: 24px; font-weight: 900; letter-spacing: 1px; 
+    text-transform: uppercase; font-family: 'Arial Black', sans-serif; color: #fff;
+}
+.strikethrough { position: relative; display: inline-block; }
+.strikethrough::after {
+    content: ''; position: absolute; left: 0; top: 50%; width: 100%; height: 3px; 
+    background: var(--primary-red); transform: translateY(-50%);
+}
+
+/* Header Right - Info Section */
+.header-right { display: flex; align-items: center; gap: 20px; }
+.info-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #ccc; text-decoration: none; transition: 0.3s; }
+.info-item:hover { color: white; }
+.info-item i { color: var(--primary-red); font-size: 1rem; }
+.info-text { display: block; } /* PC дээр харагдана */
+
+.action-btn { position: relative; font-size: 1.2rem; cursor: pointer; color: white; background: none; border: none; margin-left: 10px; }
+.badge-count { 
+  position: absolute; top: -5px; right: -8px; background: var(--primary-red); 
+  color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: bold;
+}
+
+/* --- HERO --- */
+.hero {
+  height: 350px; display: flex; align-items: center; justify-content: center;
+  position: relative; text-align: center; margin-top: 20px;
+}
+.hero h1 { font-size: 4rem; margin: 0; line-height: 1; text-transform: uppercase; font-family: 'Times New Roman', serif; color: #ffffff; font-weight: 400; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
+
+/* --- CONTROLS --- */
+.controls-bar {
+  padding: 20px 5%; display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+  background: rgba(10,10,10, 0.8); border-bottom: 1px solid #222; margin-bottom: 20px;
+}
+.search-box { display: flex; background: #222; border-radius: 4px; border: 1px solid #333; overflow: hidden; }
+.search-box input { background: transparent; border: none; color: white; padding: 8px 12px; width: 200px; }
+select.filter-select { padding: 8px; background: #222; color: white; border: 1px solid #333; border-radius: 4px; }
+
+/* --- PRODUCTS --- */
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; padding: 0 5%; }
+.product-card { background: var(--card-bg); border-radius: 8px; overflow: hidden; position: relative; transition: transform 0.3s; border: 1px solid #333; }
+.product-card:hover { transform: translateY(-5px); border-color: #555; }
+.card-badge { position: absolute; top: 10px; left: 10px; padding: 4px 8px; font-size: 0.75rem; font-weight: bold; border-radius: 4px; z-index: 2; text-transform: uppercase; }
+.badge-sale { background: var(--primary-red); color: white; }
+.img-container { height: 220px; overflow: hidden; background: #1a1a1a; cursor: pointer; }
+.img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.product-card:hover img { transform: scale(1.05); }
+.card-info { padding: 12px; }
+.card-title { font-weight: 600; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.95rem; }
+.card-price { font-weight: bold; font-size: 1rem; }
+.old-price { text-decoration: line-through; color: #666; font-size: 0.85rem; margin-right: 8px; }
+.stock-label { font-size: 0.8rem; margin-top: 5px; display: block; color: #888; }
+.card-actions { margin-top: 10px; display: grid; grid-template-columns: 3fr 1fr; gap: 5px; }
+.btn-add { background: var(--primary-red); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+.btn-view { background: #333; color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+/* --- CART DRAWER --- */
+#cartOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 199; display: none; backdrop-filter: blur(3px); }
+#cartOverlay.show { display: block; }
+#cartDrawer { 
+    position: fixed; top: 0; right: -360px; width: 340px; height: 100%; 
+    background: #111; z-index: 200; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    box-shadow: -5px 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; 
+}
+#cartDrawer.open { right: 0; }
+.cart-header { padding: 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+.cart-items { flex-grow: 1; overflow-y: auto; padding: 15px; }
+.cart-item { display: flex; gap: 10px; margin-bottom: 15px; background: #1a1a1a; padding: 10px; border-radius: 6px; align-items: center; }
+.cart-item img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
+.btn-remove { background: #2a0a0a; border: 1px solid #3a1111; color: #ff4444; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+
+/* --- MODALS --- */
+.modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+.modal-content { background: #161616; width: 90%; max-width: 600px; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; overflow-y: auto; border: 1px solid #333; }
+.form-input { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 6px; margin-bottom: 10px; }
+.step-container { display: none; padding: 25px; }
+.step-container.active { display: block; animation: fadeIn 0.3s; }
+.payment-methods { display: flex; gap: 10px; margin-bottom: 20px; }
+.pm-btn { flex: 1; padding: 15px; background: #222; border: 2px solid #333; color: #888; border-radius: 8px; cursor: pointer; text-align: center; font-weight: 500; }
+.pm-btn.active { border-color: var(--primary-red); color: white; background: #1a0505; }
+.pay-section { display: none; text-align: center; padding: 10px; }
+.pay-section.show { display: block; animation: fadeIn 0.3s; }
+
+/* --- FOOTER --- */
+footer { background: rgba(8,8,8,0.98); border-top: 1px solid #222; padding: 40px 5% 20px; margin-top: 60px; }
+.footer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.footer-col h4 { color: #fff; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+/* --- MOBILE RESPONSIVE --- */
+@media(max-width: 768px) {
+  .info-text { display: none; } /* Текст нуух */
+  .header-right { gap: 15px; }
+  .products-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .modal-content { max-width: 95%; }
+  #productModal .modal-content { grid-template-columns: 1fr; }
+  #productModal img { height: 250px; }
+  .footer-grid { grid-template-columns: 1fr; text-align: center; }
+  .hero h1 { font-size: 2.5rem; }
+}
+</style>
+</head>
+<body onload="init()">
+
+<div id="intro-overlay">
+    <button id="mute-btn" class="intro-btn"><i class="fas fa-volume-mute"></i></button>
+    <button id="skip-btn" class="intro-btn">ALGASAH (SKIP) ➝</button>
+    <video id="my-intro-video" autoplay muted playsinline>
+        <source src="intro.mp4" type="video/mp4">
+    </video>
+</div>
+
+<header>
+  <div class="header-left">
+      <div class="logo-text">
+          LINDL.<span class="strikethrough">XX</span>
+      </div>
+  </div>
+
+  <div class="header-right">
+    <a href="https://www.instagram.com/lindl.xx" target="_blank" class="info-item" title="Instagram">
+        <i class="fab fa-instagram"></i> <span class="info-text">lindl.xx</span>
+    </a>
+    <a href="tel:+97686836400" class="info-item" title="Call">
+        <i class="fas fa-phone-alt"></i> <span class="info-text">8683-6400</span>
+    </a>
+    <div class="info-item" title="Location">
+        <i class="fas fa-map-marker-alt"></i> <span class="info-text">GB Center</span>
+    </div>
+
+    <div style="width: 1px; height: 20px; background: #333; margin: 0 5px;"></div>
+
+    <button class="action-btn" onclick="openAdmin()" title="Admin">⚙️</button>
+    <button class="action-btn" onclick="toggleCart()" title="Cart">
+        🛒 <span class="badge-count" id="cartCount">0</span>
+    </button>
+  </div>
+</header>
+
+<div class="modal" id="adminModal">
+  <div class="modal-content" style="max-width: 800px; width: 95%;">
+    <div style="padding: 20px; border-bottom: 1px solid #333; display:flex; justify-content:space-between;">
+        <h3>Admin Panel</h3>
+        <button onclick="closeAdmin()" style="background:none;border:none;color:#666;font-size:1.5rem;cursor:pointer;">×</button>
+    </div>
+    <div style="padding: 20px;">
+        <div id="loginSection">
+            <input type="password" id="adminPass" placeholder="Password (_!_)" class="form-input">
+            <button onclick="loginAdmin()" style="width:100%; padding:10px; background:var(--primary-red); color:white; border:none; border-radius:4px;">Login</button>
+        </div>
+        <div id="adminActions" style="display:none;">
+            <div style="background: #222; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="margin-top:0;">Promo Code</h4>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <input type="text" id="newPromoCode" placeholder="Code (e.g. SALE20)" class="form-input" style="flex:2; margin:0; text-transform:uppercase;">
+                    <input type="number" id="newPromoPercent" placeholder="%" class="form-input" style="flex:1; margin:0;">
+                    <button onclick="addPromo()" style="background:var(--primary-red); color:white; border:none; border-radius:4px;">ADD</button>
+                </div>
+                <div id="adminPromoList" style="max-height: 100px; overflow-y:auto; border-top:1px solid #333; padding-top:10px;"></div>
+            </div>
+            
+            <h4 id="formTitle" style="margin-top:0;">Add / Edit Product</h4>
+            <input type="hidden" id="editIndex" value="-1">
+            <input type="text" id="pName" placeholder="Product Name" class="form-input">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="pPrice" placeholder="Price (₮)" class="form-input">
+                <input type="number" id="pStock" placeholder="Stock" class="form-input">
+            </div>
+            <div style="display:flex; gap:10px;">
+                 <select id="pCat" class="form-input"><option value="Hoodie">Hoodie</option><option value="Pants">Pants</option><option value="T-Shirt">T-Shirt</option><option value="Hat">Hat</option></select>
+                 <input type="text" id="pSizes" placeholder="Sizes (S,M,L)" class="form-input">
+            </div>
+            <input type="file" id="pImageUpload" accept="image/*" class="form-input">
+            <input type="hidden" id="pImageData">
+            
+            <div style="display:flex; gap:10px; margin-top:10px;">
+                <button onclick="saveProduct()" id="saveBtn" style="flex:2; padding:10px; background:var(--primary-red); color:white; border:none; font-weight:bold; border-radius:4px;">SAVE</button>
+                <button onclick="resetForm()" id="cancelBtn" style="display:none; flex:1; padding:10px; background:#444; color:white; border:none; border-radius:4px;">CANCEL</button>
+            </div>
+            
+            <h4 style="margin-top:20px;">Product List</h4>
+            <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse: collapse; font-size: 0.85rem; color: #ccc;">
+                    <tbody id="adminProductList"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>LINDL.<span class="strikethrough">XX</span></h1>
+    <p style="color:#ccc; margin-top:10px; font-size: 1.1rem; letter-spacing: 2px;">BE BOLD. BE DIFFERENT.</p>
+  </div>
+</section>
+
+<section id="products">
+  <div class="controls-bar">
+    <div class="search-box">
+      <span style="padding:8px; color:#666;">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search...">
+    </div>
+    <select class="filter-select" id="categoryFilter">
+      <option value="all">All Categories</option>
+    </select>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<div class="modal" id="productModal">
+  <div class="modal-content" style="max-width:800px; display:grid; grid-template-columns: 1fr 1fr;">
+    <div style="background:#000; display:flex; align-items:center; justify-content:center;">
+      <img id="modalImg" src="" style="width:100%; height:100%; object-fit:contain;">
+    </div>
+    <div style="padding:30px; display:flex; flex-direction:column; justify-content:center;">
+      <h2 id="modalTitle" style="margin:0 0 10px 0;">Product</h2>
+      <h3 id="modalPrice" style="color:var(--primary-red); margin-bottom:10px;">₮0</h3>
+      <p id="modalStock" style="color:#666; font-size:0.9rem; margin-bottom:20px;">Stock: 0</p>
+      
+      <label style="color:#aaa;">Size:</label>
+      <select id="modalSize" style="width:100%; padding:10px; background:#222; color:white; border:1px solid #333; margin:5px 0 20px; border-radius:4px;"></select>
+      
+      <button id="modalAddToCart" style="padding:15px; background:var(--primary-red); color:white; border:none; font-weight:bold; border-radius:4px;">ADD TO CART</button>
+      <button onclick="document.getElementById('productModal').style.display='none'" style="padding:10px; background:none; color:#666; border:none; margin-top:10px; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="orderModal">
+  <div class="modal-content">
+    <div style="padding: 20px; border-bottom: 1px solid #333; display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="margin:0;" id="orderTitle">Order Details</h3>
+      <button onclick="closeOrder()" style="background:none; border:none; color:#666; font-size:1.5rem; cursor:pointer;">×</button>
+    </div>
+    
+    <div id="stepInfo" class="step-container active">
+        <input type="text" id="userName" class="form-input" placeholder="Your Name *">
+        <input type="number" id="userPhone" class="form-input" placeholder="Phone Number *">
+        <textarea id="userAddress" class="form-input" placeholder="Delivery Address *" style="min-height:80px;"></textarea>
+        <button onclick="goToPayment()" style="width:100%; padding:15px; background:var(--primary-red); color:white; border:none; font-weight:bold; border-radius:4px;">NEXT: PAYMENT ➝</button>
+    </div>
+
+    <div id="stepPayment" class="step-container">
+        <div style="margin-bottom:20px; padding:10px; background:#222; border-radius:4px; font-size:0.9rem; border-left: 3px solid var(--primary-red);">
+            Customer: <span id="summaryName" style="font-weight:bold; color:white;"></span><br>
+            Total: <span id="summaryTotal" style="font-weight:bold; color:var(--primary-red);"></span>
+        </div>
+        
+        <div style="display:flex; gap:5px; margin-bottom:20px;">
+            <input type="text" id="userPromoCode" placeholder="PROMO CODE" style="flex:1; padding:10px; background:#222; border:1px solid #333; color:white; border-radius:4px; text-transform:uppercase;">
+            <button onclick="applyUserPromo()" style="background:#444; color:white; border:none; padding:0 15px; border-radius:4px; cursor:pointer;">Apply</button>
+        </div>
+        <p id="promoMsg" style="font-size:0.8rem; margin-top:-15px; margin-bottom:20px;"></p>
+
+        <div class="payment-methods">
+          <div class="pm-btn active" onclick="switchPayment('qpay', this)">QPay</div>
+          <div class="pm-btn" onclick="switchPayment('social', this)">Social</div>
+          <div class="pm-btn" onclick="switchPayment('card', this)">Card</div>
+        </div>
+        <div class="payment-body">
+          <div id="qpay" class="pay-section show">
+             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=LINDLXX_Payment" style="background:white; padding:10px; border-radius:8px;">
+            <p style="font-size:0.8rem; color:#888; margin-top:5px;">Scan to pay</p>
+          </div>
+          <div id="social" class="pay-section">
+            <button style="background:#ff6b00; color:white; padding:12px 30px; border-radius:25px; border:none; font-weight:bold;">Open SocialPay</button>
+          </div>
+          <div id="card" class="pay-section">
+             <p style="color:#888;">Card terminal not connected.</p>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:20px;">
+            <button onclick="backToInfo()" style="flex:1; padding:15px; background:#333; color:white; border:none; border-radius:4px;">← Back</button>
+            <button id="btnCompleteOrder" onclick="completeOrder()" style="flex:2; padding:15px; background:var(--primary-red); color:white; border:none; font-weight:bold; border-radius:4px;">CONFIRM ORDER</button>
+        </div>
+    </div>
+  </div>
+</div>
+
+<div id="cartOverlay" onclick="toggleCart()"></div>
+<div id="cartDrawer">
+  <div class="cart-header">
+    <h3>Shopping Cart</h3>
+    <button onclick="toggleCart()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">×</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:bold; margin-bottom:15px;">
+      <span>Total:</span> <span id="cartTotal">₮0</span>
+    </div>
+    <button onclick="startCheckout()" style="width:100%; padding:15px; background:var(--primary-red); color:white; border:none; font-weight:bold; border-radius:4px;">CHECKOUT</button>
+  </div>
+</div>
+
+<footer id="footer">
+  <div class="footer-grid">
+    <div class="footer-col spotify-widget">
+      <h4 style="color: #1DB954; margin-top:0;"><i class="fab fa-spotify"></i> Playlist</h4>
+      <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/7KXjTSCq5nL1LoYtL7XAwS?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+
+    <div class="footer-col">
+      <h4 style="margin-top:0;">Бидний тухай</h4>
+      <p style="color:#888; font-size:0.9rem; line-height: 1.6;">
+        Concept store from Ulaanbaatar.<br>
+        High quality, limited edition drops.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4 style="margin-top:0;">Холбоо барих</h4>
+      <ul style="list-style:none; padding:0; margin:0; line-height: 2; color: #aaa;">
+        <li><i class="fas fa-map-marker-alt" style="width:20px"></i> GB center, B1 Floor</li>
+        <li><i class="fas fa-phone" style="width:20px"></i> +976 8683-6400</li>
+        <li>
+            <a href="https://www.instagram.com/lindl.xx" target="_blank" style="color:#aaa; text-decoration:none;">
+                <i class="fab fa-instagram" style="width:20px"></i> @lindl.xx
+            </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align:center; color:#444; font-size:0.85rem; padding-top:20px; border-top:1px solid #222; margin-top:30px;">
+    © 2025 LINDL.XX. бүх эрх хуулиар хамгаалагдсан.
+  </div>
+</footer>
+
+<script>
+/* --- TELEGRAM CONFIG --- */
+const TELEGRAM_BOT_TOKEN = "7628222789:AAHo1BqL4g_fP37xJgStqeoFs3IFT9s8fkw"; 
+const TELEGRAM_CHAT_ID = "-1005082767021";
+
+/* --- DATA KEYS --- */
+const DB_KEY = 'lindl_xx_db_v1'; 
+const CART_KEY = 'lindl_xx_cart_v1';
+const PROMO_KEY = 'lindl_xx_promos_v1';
+
+/* --- STATE --- */
+let products = [];
+let cart = [];
+let promoCodes = [];
+let currentDiscount = 0;
+let activeFilters = { category: 'Бүүгд энд байна', search: '', saleOnly: false };
+
+/* --- INITIALIZATION --- */
+function init() { 
+    setupIntro(); // Video Setup call
+    
+    // Load Data
+    const storedProds = localStorage.getItem(DB_KEY);
+    if (storedProds) {
+        products = JSON.parse(storedProds);
+    } else {
+        products = [
+          { name: 'Oversize Hoodie Black', price: 85000, salePrice: 65000, isSale: true, image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?q=80&w=500', category: 'Hoodie', stock: 15, sizes: ['M','L','XL'] },
+          { name: 'Cargo Pants Olive', price: 95000, salePrice: null, isSale: false, image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=500', category: 'Pants', stock: 8, sizes: ['30','32', '34'] }
+        ];
+        saveData(); 
+    }
+    const storedCart = localStorage.getItem(CART_KEY);
+    if(storedCart) cart = JSON.parse(storedCart);
+    
+    loadPromos();
+    renderProducts(); 
+    updateCartUI(); 
+    updateFilters(); 
+}
+
+/* --- VIDEO LOGIC (FIXED) --- */
+function setupIntro() {
+    const overlay = document.getElementById('intro-overlay');
+    const video = document.getElementById('my-intro-video');
+    const skipBtn = document.getElementById('skip-btn');
+    const muteBtn = document.getElementById('mute-btn');
+    
+    // 1. Finish function (Smooth transition)
+    function finishIntro() {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none'; // Click нэвтрүүлэх
+        setTimeout(() => {
+            overlay.style.display = 'none'; // DOM-оос бүрэн арилгах
+        }, 800); // CSS transition time-тай ижил
+    }
+
+    // 2. Skip Button
+    skipBtn.addEventListener('click', finishIntro);
+
+    // 3. Auto finish on video end
+    video.addEventListener('ended', finishIntro);
+
+    // 4. Mute Toggle
+    muteBtn.addEventListener('click', () => {
+        if(video.muted) {
+            video.muted = false;
+            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        } else {
+            video.muted = true;
+            muteBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        }
+    });
+}
+
+function saveData() { localStorage.setItem(DB_KEY, JSON.stringify(products)); }
+function loadPromos() {
+    const storedPromos = localStorage.getItem(PROMO_KEY);
+    promoCodes = storedPromos ? JSON.parse(storedPromos) : [{ code: 'LINDL10', percent: 10 }];
+}
+
+/* --- RENDER FUNCTIONS --- */
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  
+  const filtered = products.filter(p => {
+    return (activeFilters.category === 'Бүүгд энд байна' || p.category === activeFilters.category) &&
+           (p.name.toLowerCase().includes(activeFilters.search.toLowerCase()));
+  });
+  
+  filtered.forEach((p, index) => {
+    const priceHtml = p.isSale 
+      ? `<span class="old-price">₮${p.price.toLocaleString()}</span> <span style="color:var(--primary-red)">₮${p.salePrice.toLocaleString()}</span>`
+      : `<span>₮${p.price.toLocaleString()}</span>`;
+    
+    let stockHtml = p.stock <= 0 
+        ? `<span class="stock-label" style="color:red; font-weight:bold;">SOLD OUT</span>` 
+        : `<span class="stock-label">Stock: ${p.stock}</span>`;
+    
+    let btnHtml = p.stock <= 0 
+        ? `<button class="btn-add" style="background:#333; cursor:not-allowed;" disabled>SOLD OUT</button>`
+        : `<button class="btn-add" onclick="openProductModal(${index})">ADD CART</button>`;
+
+    const div = document.createElement('div');
+    div.className = 'product-card';
+    div.innerHTML = `
+      ${p.isSale ? '<div class="card-badge badge-sale">Sale</div>' : ''}
+      <div class="img-container" onclick="openProductModal(${index})"><img src="${p.image}"></div>
+      <div class="card-info">
+        <div class="card-title">${p.name}</div>
+        <div class="card-price">${priceHtml}</div>
+        ${stockHtml}
+        <div class="card-actions">
+          ${btnHtml}
+          <button class="btn-view" onclick="openProductModal(${index})">👁</button>
+        </div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+function openProductModal(index) {
+    const p = products[index];
+    document.getElementById('modalTitle').innerText = p.name;
+    document.getElementById('modalPrice').innerText = `₮${(p.isSale ? p.salePrice : p.price).toLocaleString()}`;
+    document.getElementById('modalImg').src = p.image;
+    document.getElementById('modalStock').innerText = `Stock: ${p.stock}`;
+    
+    const sizeSelect = document.getElementById('modalSize');
+    sizeSelect.innerHTML = '';
+    p.sizes.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s; opt.innerText = s; sizeSelect.appendChild(opt);
+    });
+    
+    document.getElementById('modalAddToCart').onclick = function() { addToCart(index); };
+    document.getElementById('productModal').style.display = 'flex';
+}
+
+function addToCart(index) {
+    const p = products[index];
+    const size = document.getElementById('modalSize').value;
+    const existing = cart.find(c => c.index === index && c.size === size);
+    if(existing) {
+        if(existing.qty < p.stock) existing.qty++;
+        else alert("Not enough stock!");
+    } else {
+        cart.push({ index, name: p.name, price: p.isSale ? p.salePrice : p.price, image: p.image, size, qty: 1 });
+    }
+    updateCartUI();
+    document.getElementById('productModal').style.display = 'none';
+}
+
+function toggleCart() { 
+    const drawer = document.getElementById('cartDrawer');
+    const overlay = document.getElementById('cartOverlay');
+    if(drawer.classList.contains('open')) {
+        drawer.classList.remove('open'); overlay.classList.remove('show');
+    } else {
+        drawer.classList.add('open'); overlay.classList.add('show');
+    }
+}
+
+function updateCartUI() {
+    const list = document.getElementById('cartItems');
+    list.innerHTML = '';
+    let total = 0; let count = 0;
+    
+    cart.forEach((c, i) => {
+        total += c.price * c.qty; count += c.qty;
+        list.innerHTML += `
+            <div class="cart-item">
+                <img src="${c.image}">
+                <div style="flex-grow:1;">
+                    <div style="font-weight:bold; font-size:0.9rem;">${c.name}</div>
+                    <div style="font-size:0.8rem; color:#888;">${c.size} | ${c.qty}x</div>
+                    <div style="color:var(--primary-red);">₮${(c.price * c.qty).toLocaleString()}</div>
+                </div>
+                <button class="btn-remove" onclick="removeFromCart(${i})">×</button>
+            </div>`;
+    });
+    
+    document.getElementById('cartTotal').innerText = `₮${total.toLocaleString()}`;
+    document.getElementById('cartCount').innerText = count;
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+}
+
+function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
+
+/* --- CHECKOUT --- */
+function startCheckout() {
+    if(cart.length === 0) return alert("Cart is empty!");
+    toggleCart();
+    document.getElementById('orderModal').style.display = 'flex';
+    document.getElementById('stepInfo').classList.add('active');
+    document.getElementById('stepPayment').classList.remove('active');
+}
+function closeOrder() { document.getElementById('orderModal').style.display = 'none'; }
+
+function goToPayment() {
+    const name = document.getElementById('userName').value;
+    const phone = document.getElementById('userPhone').value;
+    const addr = document.getElementById('userAddress').value;
+    if(!name || !phone || !addr) return alert("Please fill all fields!");
+    
+    document.getElementById('summaryName').innerText = name;
+    calculateTotal();
+    document.getElementById('stepInfo').classList.remove('active');
+    document.getElementById('stepPayment').classList.add('active');
+}
+function backToInfo() {
+    document.getElementById('stepPayment').classList.remove('active');
+    document.getElementById('stepInfo').classList.add('active');
+}
+
+function calculateTotal() {
+    let total = cart.reduce((sum, c) => sum + (c.price * c.qty), 0);
+    if(currentDiscount > 0) {
+        const discAmount = total * (currentDiscount / 100);
+        total -= discAmount;
+        document.getElementById('promoMsg').innerText = `Discount (${currentDiscount}%): -₮${discAmount.toLocaleString()}`;
+        document.getElementById('promoMsg').style.color = '#2ecc71';
+    } else {
+        document.getElementById('promoMsg').innerText = '';
+    }
+    document.getElementById('summaryTotal').innerText = `₮${total.toLocaleString()}`;
+}
+
+function applyUserPromo() {
+    const code = document.getElementById('userPromoCode').value.trim().toUpperCase();
+    const promo = promoCodes.find(p => p.code === code);
+    if(promo) {
+        currentDiscount = promo.percent;
+        alert(`Success! ${promo.percent}% OFF.`);
+        calculateTotal();
+    } else {
+        alert("Invalid Code");
+        currentDiscount = 0;
+        calculateTotal();
+    }
+}
+function switchPayment(type, btn) {
+    document.querySelectorAll('.pm-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.pay-section').forEach(s => s.classList.remove('show'));
+    document.getElementById(type).classList.add('show');
+}
+
+function generateOrderRef() { return 'LINDL-' + Math.floor(1000 + Math.random() * 9000); }
+
+function completeOrder() {
+    const name = document.getElementById('userName').value;
+    const phone = document.getElementById('userPhone').value;
+    const address = document.getElementById('userAddress').value;
+    const orderRef = generateOrderRef();
+    const totalAmount = document.getElementById('summaryTotal').innerText;
+    
+    let itemsText = "";
+    cart.forEach(item => { itemsText += `▪️ ${item.name} (${item.size}) - ${item.qty}pcs\n`; });
+
+    const message = `🔥 <b>NEW ORDER!</b> 🔥\n\n👤 <b>Client:</b> ${name}\n📞 <b>Phone:</b> ${phone}\n📍 <b>Address:</b> ${address}\n\n🛒 <b>Items:</b>\n${itemsText}\n💰 <b>Total:</b> ${totalAmount}\n🔑 <b>Ref:</b> <code>${orderRef}</code>`;
+
+    const btn = document.getElementById('btnCompleteOrder');
+    const originalText = btn.innerText;
+    btn.innerText = "SENDING..."; btn.disabled = true;
+
+    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message, parse_mode: 'HTML' })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if(data.ok) {
+            cart = []; updateCartUI(); localStorage.removeItem(CART_KEY);
+            document.getElementById('orderModal').style.display = 'none';
+            alert(`Order Sent!\nRef: ${orderRef}`);
+        } else { alert("Error sending order."); }
+    })
+    .catch(e => alert("Network Error"))
+    .finally(() => { btn.innerText = originalText; btn.disabled = false; });
+}
+
+/* --- ADMIN & FILTER UTILS --- */
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    activeFilters.search = e.target.value; renderProducts();
+});
+function updateFilters() {
+    const select = document.getElementById('categoryFilter');
+    const categories = ['Бүүгд энд байна', ...new Set(products.map(p => p.category))];
+    select.innerHTML = '';
+    categories.forEach(c => {
+        const opt = document.createElement('option'); opt.value = c; opt.innerText = c === 'all' ? 'All' : c;
+        select.appendChild(opt);
+    });
+    select.addEventListener('change', (e) => { activeFilters.category = e.target.value; renderProducts(); });
+}
+
+function openAdmin() { document.getElementById('adminModal').style.display = 'flex'; }
+function closeAdmin() { document.getElementById('adminModal').style.display = 'none'; }
+function renderAdminList() {
+    const list = document.getElementById('adminProductList'); list.innerHTML = '';
+    products.forEach((p, index) => {
+        list.innerHTML += `<tr style="border-bottom: 1px solid #222;"><td style="padding:5px;">${p.name}</td><td>₮${p.price.toLocaleString()}</td><td><button onclick="editProduct(${index})">Edit</button><button onclick="deleteProduct(${index})" style="color:red; margin-left:5px;">Del</button></td></tr>`;
+    });
+}
+function renderAdminPromos() {
+    const list = document.getElementById('adminPromoList'); list.innerHTML = '';
+    promoCodes.forEach((p, index) => {
+        list.innerHTML += `<div style="background:#333; padding:5px; margin-bottom:5px; display:flex; justify-content:space-between;"><span>${p.code} (-${p.percent}%)</span><button onclick="deletePromo(${index})">x</button></div>`;
+    });
+}
+function addPromo() {
+    const code = document.getElementById('newPromoCode').value.toUpperCase();
+    const percent = parseInt(document.getElementById('newPromoPercent').value);
+    if(code && percent) { promoCodes.push({code, percent}); localStorage.setItem(PROMO_KEY, JSON.stringify(promoCodes)); renderAdminPromos(); }
+}
+function deletePromo(i) { promoCodes.splice(i, 1); localStorage.setItem(PROMO_KEY, JSON.stringify(promoCodes)); renderAdminPromos(); }
+function loginAdmin() {
+    if(document.getElementById('adminPass').value === '1219') {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminActions').style.display = 'block';
+        renderAdminList(); renderAdminPromos();
+    } else alert("Wrong Password!");
+}
+function deleteProduct(i) { if(confirm('Delete?')) { products.splice(i,1); saveData(); renderProducts(); renderAdminList(); } }
+function editProduct(i) {
+    const p = products[i];
+    document.getElementById('pName').value = p.name;
+    document.getElementById('pPrice').value = p.price;
+    document.getElementById('pStock').value = p.stock;
+    document.getElementById('pSizes').value = p.sizes.join(',');
+    document.getElementById('pImageData').value = p.image;
+    document.getElementById('editIndex').value = i;
+    document.getElementById('saveBtn').innerText = "UPDATE";
+    document.getElementById('cancelBtn').style.display = "block";
+}
+function resetForm() {
+    document.getElementById('pName').value = ''; document.getElementById('pPrice').value = '';
+    document.getElementById('pStock').value = ''; document.getElementById('pSizes').value = '';
+    document.getElementById('pImageUpload').value = ''; document.getElementById('editIndex').value = "-1";
+    document.getElementById('saveBtn').innerText = "SAVE"; document.getElementById('cancelBtn').style.display = "none";
+}
+function saveProduct() {
+    const name = document.getElementById('pName').value;
+    const price = parseInt(document.getElementById('pPrice').value);
+    const cat = document.getElementById('pCat').value;
+    const stock = parseInt(document.getElementById('pStock').value);
+    const sizes = document.getElementById('pSizes').value.split(',');
+    const image = document.getElementById('pImageData').value;
+    const index = parseInt(document.getElementById('editIndex').value);
+    if(!name || !price) return;
+    const newProd = { name, price, category: cat, stock, sizes, image: image || 'https://via.placeholder.com/500', isSale: false, salePrice: null };
+    if(index > -1) products[index] = { ...products[index], ...newProd };
+    else products.push(newProd);
+    saveData(); renderProducts(); renderAdminList(); resetForm();
+}
+document.getElementById('pImageUpload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) { document.getElementById('pImageData').value = evt.target.result; }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+</body>
+</html>
